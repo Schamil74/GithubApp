@@ -1,0 +1,17 @@
+// Vars
+@import './system/vars';
+
+// Lins
+@import './system/libs';
+
+// Mixins
+@import './system/mixins';
+
+// Fonts
+@import './system/fonts';
+
+// Default styles
+@import './system/default';
+
+//Components
+@import '../components/**/**/*.scss';
