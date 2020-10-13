@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "esnext",
+        "target": "es5",
         "module": "esnext",
         "outDir": "dist/",
         "baseUrl": ".",
@@ -20,7 +20,7 @@
         "strict": true,
         "moduleResolution": "node",
         "esModuleInterop": true,
-        "lib": ["es5", "es6", "dom", "dom.iterable", "ESNext"],
+        "lib": ["dom", "dom.iterable", "ESNext"],
         "allowSyntheticDefaultImports": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
@@ -29,6 +29,6 @@
         "emitDecoratorMetadata": true,
         "typeRoots": ["node_modules/@types"]
     },
-    "include": ["src"],
-    "exclude": ["node_modules"]
+    "include": ["src"]
+    // "exclude": ["node_modules"]
 }

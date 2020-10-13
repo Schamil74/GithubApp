@@ -123,6 +123,24 @@ const jsLoaders = extra => {
 const plugins = () => {
     const base = [
         new HTMLWebpackPlugin({
+            pwa: isProd
+                ? `
+                    <script>
+                        if ('serviceWorker' in navigator) {
+                            window.addEventListener('load', function () {
+                                navigator.serviceWorker.register('${PUBLIC_PATH}service-worker.js').then(function (registration) {
+                                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                                }, function (err) {
+                                    console.log('ServiceWorker registration failed: ', err);
+                                }).catch(function (err) {
+                                    console.log(err)
+                                });
+                            });
+                        } else {
+                            console.log('service worker is not supported');
+                        }
+                    </script>`
+                : '',
             template: paths.src + '/index.html',
         }),
 
@@ -141,6 +159,10 @@ const plugins = () => {
                 //     to: paths.dist + '/img',
                 // },
                 { from: paths.src + '/.htaccess', to: paths.dist },
+                {
+                    from: paths.src + '/service-worker.js',
+                    to: paths.dist,
+                },
             ],
         }),
 
@@ -148,6 +170,9 @@ const plugins = () => {
             logo: paths.src + '/favicon/favicon.svg',
             publicPath: PUBLIC_PATH,
             prefix: 'static/',
+            favicons: {
+                start_url: `${PUBLIC_PATH}?source=pwa`,
+            },
             inject: htmlPlugin => {
                 return (
                     path.basename(htmlPlugin.options.filename) === 'index.html'
@@ -229,11 +254,12 @@ module.exports = {
                 test: /\.(ts|tsx)$/,
                 use: jsLoaders('ts-loader'),
             },
-            {
-                test: /\.html$/,
+            // расскомментировать, если будет использоваться шаблонные строки в html webpackhtmlplugin
+            // {
+            //     test: /\.html$/,
 
-                loader: 'html-loader',
-            },
+            //     loader: 'html-loader',
+            // },
             {
                 test: /\.css$/,
                 use: cssLoaders(),
