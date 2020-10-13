@@ -18,6 +18,7 @@ import {
     ListItemSecondaryAction,
     ListItemText,
 } from '@material-ui/core'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import StarIcon from '@material-ui/icons/Star'
 import React, { FC } from 'react'
 import { useDispatch } from 'react-redux'
@@ -32,6 +33,7 @@ const Repo: FC<TProps> = props => {
     const { item, value } = props
     const { id, name, html_url } = item
     const { avatar_url } = item.owner
+    const matches = useMediaQuery('(max-width:767px)')
 
     const dispatch: Dispatch = useDispatch()
 
@@ -65,24 +67,30 @@ const Repo: FC<TProps> = props => {
 
                 <ListItemText primary={name} />
 
-                <Box ml={2}>
-                    <Link
-                        href={html_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Ссылка на репо
-                    </Link>
-                </Box>
-                <Box ml={2} mr={2}>
-                    <ListItemIcon>
-                        <Box display="flex" alignItems="center">
-                            <StarIcon color="primary" />
-                            &nbsp;
-                            {item.stargazers_count}
+                {!matches ? (
+                    <>
+                        <Box ml={2}>
+                            <Link
+                                href={html_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Ссылка на репо
+                            </Link>
                         </Box>
-                    </ListItemIcon>
-                </Box>
+                        <Box ml={2} mr={2}>
+                            <ListItemIcon>
+                                <Box display="flex" alignItems="center">
+                                    <StarIcon color="primary" />
+                                    &nbsp;
+                                    {item.stargazers_count}
+                                </Box>
+                            </ListItemIcon>
+                        </Box>
+                    </>
+                ) : (
+                    ''
+                )}
 
                 <ListItemSecondaryAction>
                     <Checkbox

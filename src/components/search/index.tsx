@@ -11,7 +11,7 @@ const Search: FC<TSearch> = props => {
 
     return (
         <>
-            <Grid item xs={10}>
+            <Grid item xs={7} sm={8} md={10}>
                 <TextField
                     size="small"
                     fullWidth
@@ -28,7 +28,7 @@ const Search: FC<TSearch> = props => {
                     }}
                 />
             </Grid>
-            <Grid item xs={2}>
+            <Grid item xs={5} sm={4} md={2}>
                 <Button
                     type="button"
                     size="large"
