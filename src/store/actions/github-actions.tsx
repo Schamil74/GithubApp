@@ -4,11 +4,16 @@ import {
     FetcingActionType,
     GetDataActionType,
     IGitHub,
+    IIsErrorType,
+    SetAddBookMarkGit,
     SetClearActionType,
+    SetIsErrorActionType,
     SetRemoveFromBookmark,
+    SET_ADD_BOOKMARK_GIT,
     SET_CLEAR,
     SET_DATA,
     SET_FETCHING,
+    SET_IS_ERROR,
     SET_REMOVE_FROM_BOOKMARK,
     TItem,
 } from '@/store/types/github-types'
@@ -48,6 +53,8 @@ export const thunkGetData = (
         dispatch(setGitHubData(response.data))
     } catch (error) {
         console.log(error.message)
+        dispatch(setIsFetching(false))
+        dispatch(setIsError({ error: true, msg: error.message }))
     }
 }
 
@@ -55,10 +62,21 @@ export const setIsFetching = (isFetching: boolean): FetcingActionType => {
     return { type: SET_FETCHING, isFetching }
 }
 
+export const setIsError = (isError: IIsErrorType): SetIsErrorActionType => {
+    return { type: SET_IS_ERROR, isError }
+}
+
 export const setGitHubData = (githubdata: IGitHub): GetDataActionType => {
     return {
         type: SET_DATA,
         ...githubdata,
+    }
+}
+
+export const setAddBookMarkGit = (id: number): SetAddBookMarkGit => {
+    return {
+        type: SET_ADD_BOOKMARK_GIT,
+        id,
     }
 }
 

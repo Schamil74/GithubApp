@@ -3,11 +3,11 @@ import SearchIcon from '@material-ui/icons/Search'
 import React, { FC } from 'react'
 
 type TSearch = {
-    onToggle(ev: React.ChangeEvent<HTMLInputElement>): void
+    onSeacrh(ev: React.ChangeEvent<HTMLInputElement>): void
     onClick(): void
 }
 const Search: FC<TSearch> = props => {
-    const { onToggle, onClick } = props
+    const { onSeacrh, onClick } = props
 
     return (
         <>
@@ -16,9 +16,9 @@ const Search: FC<TSearch> = props => {
                     size="small"
                     fullWidth
                     id="outlined-basic"
-                    label="Search"
+                    label="Поиск"
                     variant="outlined"
-                    onChange={onToggle}
+                    onChange={onSeacrh}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -37,7 +37,7 @@ const Search: FC<TSearch> = props => {
                     color="primary"
                     onClick={onClick}
                 >
-                    Find
+                    Найти
                 </Button>
             </Grid>
         </>

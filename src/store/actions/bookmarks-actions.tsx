@@ -6,15 +6,6 @@ import {
     TBookmarkItem,
 } from '../types/bookmarks-types'
 
-export const addBookmark = async (bookmark: TBookmarkItem) => {
-    setAddBookmark(bookmark)
-}
-
-export const deleteBookmark = (bookmark: TBookmarkItem, id: number) => {
-    bookmark.isBookmarked = false
-    setDeleteBookmark(id)
-}
-
 export const setAddBookmark = (
     bookmark: TBookmarkItem
 ): SetAddBookmarkActionType => {

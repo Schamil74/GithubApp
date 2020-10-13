@@ -1,66 +1,55 @@
+import { getScrollHeight } from '@/utils'
 import {
     Box,
-    Button,
     Container,
     CssBaseline,
     Grid,
-    Tab,
-    Tabs,
     Typography,
 } from '@material-ui/core'
-import React, { FC, useEffect, useRef, useState } from 'react'
+import 'fontsource-roboto'
+import React, { FC, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
-import RepoList from './components/list'
-import Loader from './components/loader'
 import Search from './components/search'
+import TabsApp from './components/tabs'
 import { setClearHubData, thunkGetData } from './store/actions/github-actions'
 import { AppThunkDispatch, PersistedState } from './store/types'
 
-const getScrollHeight = (): number => {
-    return Math.max(
-        document.body.scrollHeight,
-        document.documentElement.scrollHeight,
-        document.body.offsetHeight,
-        document.documentElement.offsetHeight,
-        document.body.clientHeight,
-        document.documentElement.clientHeight
-    )
-}
-const App: FC = (props: any) => {
-    const gitHubState = (state: PersistedState) => state.github
-    const bookmarksState = (state: PersistedState) => state.bookmarks
+export const perPage = 4
 
-    const { isFetching, items, total_count } = useSelector(gitHubState)
-    const { bookmarks } = useSelector(bookmarksState)
+const App: FC = () => {
+    const gitHubState = (state: PersistedState) => state.github
+    const { isFetching } = useSelector(gitHubState)
 
     const thunkDispatch: AppThunkDispatch = useDispatch()
     const dispatch: Dispatch = useDispatch()
 
-    const [value, setValue] = useState<number>(0)
     const [searchValue, setSearchValue] = useState<string>('')
     const [currentPage, setCurrentPage] = useState<number>(1)
     const isInitialMount = useRef<boolean>(true)
 
     useEffect(() => {
         if (isInitialMount.current) {
-            thunkDispatch(thunkGetData('', 4, 1))
+            thunkDispatch(thunkGetData(searchValue.trim(), perPage, 1))
             isInitialMount.current = false
         } else {
-            thunkDispatch(thunkGetData(searchValue.trim(), 4, currentPage))
+            thunkDispatch(
+                thunkGetData(searchValue.trim(), perPage, currentPage)
+            )
         }
     }, [currentPage])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!isFetching) {
             const scrollHeight = getScrollHeight()
+
             setTimeout(function () {
                 window.scrollTo(0, scrollHeight)
-            }, 100)
+            }, 0)
         }
     }, [isFetching])
 
-    const handleClick = () => {
+    const handleClickMore = () => {
         setCurrentPage(currentPage => currentPage + 1)
     }
 
@@ -70,84 +59,41 @@ const App: FC = (props: any) => {
 
     const handleClickSearch = () => {
         if (searchValue.trim() !== '') {
-            setCurrentPage(1)
             dispatch(setClearHubData())
-            thunkDispatch(thunkGetData(searchValue.trim(), 4, currentPage))
+            setCurrentPage(1)
+            thunkDispatch(
+                thunkGetData(searchValue.trim(), perPage, currentPage)
+            )
         }
-    }
-
-    const handleChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-        setValue(newValue)
     }
 
     return (
         <>
             <CssBaseline />
             <Container maxWidth="md">
-                <Box mt={3}>
-                    <Grid
-                        container
-                        spacing={3}
-                        direction="row"
-                        justify="center"
-                        alignItems="center"
-                    >
-                        <Search
-                            onClick={handleClickSearch}
-                            onToggle={handleChangeSearch}
-                        />
-                    </Grid>
+                <Box mt={3} mb={3}>
+                    <Typography align="center" variant="h3" component="h1">
+                        GitHub Finder Repos
+                    </Typography>
                 </Box>
-                <Box>
-                    <Grid container spacing={3}>
-                        <Grid item xs={12}>
-                            <Tabs
-                                value={value}
-                                onChange={handleChange}
-                                centered
-                            >
-                                <Tab label="Результаты поиска" />
-                                <Tab label="Закладки" />
-                            </Tabs>
+            </Container>
+            <Container maxWidth="md">
+                <Grid
+                    container
+                    spacing={3}
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
+                >
+                    <Search
+                        onClick={handleClickSearch}
+                        onSeacrh={handleChangeSearch}
+                    />
+                </Grid>
 
-                            <Typography>
-                                Показано {items.length} из {total_count}
-                            </Typography>
-
-                            {isFetching ? (
-                                <Box display="flex">
-                                    <Loader />
-                                </Box>
-                            ) : (
-                                <>
-                                    <RepoList items={items} />
-                                    <br />
-                                    <br />
-                                    <RepoList items={bookmarks} />
-                                </>
-                            )}
-                        </Grid>
-
-                        <Grid
-                            item
-                            xs={12}
-                            container
-                            direction="row"
-                            justify="center"
-                            alignItems="center"
-                        >
-                            <Button
-                                onClick={handleClick}
-                                size="large"
-                                variant="contained"
-                                color="primary"
-                                disabled={4 - total_count === 0 ? true : false}
-                            >
-                                Загрузить еще
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </Box>
+                <Grid>
+                    <TabsApp handleClick={handleClickMore} />
+                </Grid>
             </Container>
         </>
     )

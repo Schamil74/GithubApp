@@ -2,12 +2,16 @@ import {
     setAddBookmark,
     setDeleteBookmark,
 } from '@/store/actions/bookmarks-actions'
-import { setRemoveFromBookmarks } from '@/store/actions/github-actions'
+import {
+    setAddBookMarkGit,
+    setRemoveFromBookmarks,
+} from '@/store/actions/github-actions'
 import { TItem } from '@/store/types/github-types'
 import {
     Avatar,
     Box,
     Checkbox,
+    Link,
     ListItem,
     ListItemAvatar,
     ListItemIcon,
@@ -26,9 +30,8 @@ type TProps = {
 
 const Repo: FC<TProps> = props => {
     const { item, value } = props
-    const { id, login } = item
+    const { id, name, html_url } = item
     const { avatar_url } = item.owner
-    const labelId = `checkbox-list-secondary-label-${value}`
 
     const dispatch: Dispatch = useDispatch()
 
@@ -40,8 +43,12 @@ const Repo: FC<TProps> = props => {
 
         if (checkedItem) {
             if (id === itemId) {
-                item.isBookmarked = true
-                dispatch(setAddBookmark(item))
+                const bookmarked = {
+                    ...item,
+                    isBookmarked: true,
+                }
+                dispatch(setAddBookMarkGit(id))
+                dispatch(setAddBookmark(bookmarked))
             }
         } else {
             dispatch(setRemoveFromBookmarks(id))
@@ -50,38 +57,48 @@ const Repo: FC<TProps> = props => {
     }
 
     return (
-        <ListItem key={value}>
-            <pre>{item.isBookmarked.toString}</pre>
-            <ListItemAvatar>
-                <Avatar alt={`Avatar for ${login}`} src={avatar_url} />
-            </ListItemAvatar>
-            <ListItemText id={labelId} primary={login} />
+        <Box key={value} boxShadow={3} mb={2}>
+            <ListItem>
+                <ListItemAvatar>
+                    <Avatar alt={`Avatar for ${name}`} src={avatar_url} />
+                </ListItemAvatar>
 
-            <ListItemIcon>
-                <>
-                    <StarIcon color="primary" />
-                    {item.stargazers_count}
-                </>
-            </ListItemIcon>
+                <ListItemText primary={name} />
 
-            <ListItemSecondaryAction>
-                <Box>
+                <Box ml={2}>
+                    <Link
+                        href={html_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Ссылка на репо
+                    </Link>
+                </Box>
+                <Box ml={2} mr={2}>
+                    <ListItemIcon>
+                        <Box display="flex" alignItems="center">
+                            <StarIcon color="primary" />
+                            &nbsp;
+                            {item.stargazers_count}
+                        </Box>
+                    </ListItemIcon>
+                </Box>
+
+                <ListItemSecondaryAction>
                     <Checkbox
-                        edge="end"
                         onChange={(ev: React.ChangeEvent<HTMLInputElement>) => {
                             handleToggle(ev, id)
                         }}
                         checked={item.isBookmarked}
                         inputProps={{
-                            'aria-labelledby': labelId,
                             'title': item.isBookmarked
-                                ? 'Добавить в закладки'
-                                : 'Удалить из закладок',
+                                ? 'Удалить из закладок'
+                                : 'Добавить в закладки',
                         }}
                     ></Checkbox>
-                </Box>
-            </ListItemSecondaryAction>
-        </ListItem>
+                </ListItemSecondaryAction>
+            </ListItem>
+        </Box>
     )
 }
 
